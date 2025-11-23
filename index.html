@@ -36,20 +36,45 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* 카드 배경: 오로라 느낌의 신비로운 복합 그라데이션 */
+        /* 카드 배경: 격자 무늬 제거, 순수한 새벽 그라데이션 */
         .bg-card-aurora-final {
-            background-color: #1e1b4b; /* Deep Indigo Base */
+            background-color: #020617; /* Slate 950: 아주 깊은 밤색 */
             background-image: 
-                radial-gradient(at 0% 0%, hsla(250,40%,30%,1) 0, transparent 50%), 
-                radial-gradient(at 100% 0%, hsla(220,40%,35%,1) 0, transparent 50%), 
-                radial-gradient(at 50% 100%, hsla(280,30%,25%,1) 0, transparent 50%);
-            box-shadow: 0 15px 40px -5px rgba(0, 0, 0, 0.7), inset 0 0 30px rgba(255, 255, 255, 0.02);
+                /* 하이라이트 1: 상단 중앙에서 내려오는 차가운 새벽 빛 (Ice Blue) */
+                radial-gradient(circle at 50% 0%, rgba(186, 230, 253, 0.25) 0%, transparent 60%),
+                
+                /* 하이라이트 2: 우상단 깊은 코발트 블루 */
+                radial-gradient(circle at 100% 20%, rgba(37, 99, 235, 0.3) 0%, transparent 50%),
+                
+                /* 하이라이트 3: 좌상단 신비로운 로얄 블루 */
+                radial-gradient(circle at 0% 20%, rgba(29, 78, 216, 0.3) 0%, transparent 50%),
+                
+                /* 베이스 그라데이션: 아래(심연) -> 위(새벽) */
+                linear-gradient(to top, 
+                    #020410 0%,   /* Deepest Black-Blue */
+                    #0f172a 40%,  /* Slate Navy */
+                    #1e3a8a 80%,  /* Deep Blue */
+                    #3b82f6 100%  /* Blue 500 (새벽 하늘) */
+                );
+            background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
         }
 
-        /* 별똥별 색상 (밝은 금색) */
+        /* 별똥별 색상 */
         .text-star-gold {
             color: #fffbeb; 
             text-shadow: 0 0 8px #fcd34d;
+        }
+
+        /* 텍스트용 연한 금색 (하얀끼 도는 금색) */
+        .text-pale-gold {
+            color: #fef9c3; /* yellow-100 */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8); 
+        }
+        
+        /* 소제목용 밝은 금색 */
+        .text-light-gold {
+            color: #fffbeb; /* amber-50 */
+            text-shadow: 0 2px 8px rgba(180, 83, 9, 0.6), 0 1px 2px rgba(0,0,0,0.7);
         }
 
         /* 애니메이션 */
@@ -115,32 +140,6 @@
             </svg>
         );
 
-        // --- 카드 테두리 (밝은 금색, 두껍게) ---
-        const CardBorder = ({ className }) => (
-            <svg viewBox="0 0 300 500" className={className} fill="none" style={{ overflow: 'visible' }}>
-                <defs>
-                    <linearGradient id="starGoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor="#fff7d1" />
-                        <stop offset="50%" stopColor="#ffd700" />
-                        <stop offset="100%" stopColor="#e2c044" />
-                    </linearGradient>
-                    <filter id="border-glow-strong">
-                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                        <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-                <rect x="8" y="8" width="284" height="484" rx="18" stroke="url(#starGoldGradient)" strokeWidth="6" strokeOpacity="0.9" filter="url(#border-glow-strong)" />
-                <rect x="20" y="20" width="260" height="460" rx="12" stroke="url(#starGoldGradient)" strokeWidth="3" strokeOpacity="0.5" />
-                <circle cx="8" cy="8" r="5" fill="url(#starGoldGradient)" filter="url(#border-glow-strong)" />
-                <circle cx="292" cy="8" r="5" fill="url(#starGoldGradient)" filter="url(#border-glow-strong)" />
-                <circle cx="8" cy="492" r="5" fill="url(#starGoldGradient)" filter="url(#border-glow-strong)" />
-                <circle cx="292" cy="492" r="5" fill="url(#starGoldGradient)" filter="url(#border-glow-strong)" />
-            </svg>
-        );
-
         // --- 손 실루엣 ---
         const HandSilhouette = ({ side, className }) => {
             const isLeft = side === 'left';
@@ -157,17 +156,27 @@
             );
         };
 
+        // --- 별 장식 컴포넌트 (슬래시 길게, 별 크기 키움) ---
+        const StarDecoration = ({ className }) => (
+            <div className={`flex items-center gap-1 md:gap-2 text-light-gold opacity-90 ${className}`}>
+                <span className="w-3 md:w-5 h-[1px] bg-current opacity-80 shadow-[0_0_5px_currentColor]"></span>
+                <Star className="w-2 h-2 md:w-4 md:h-4 drop-shadow-[0_0_5px_rgba(253,224,71,0.8)]" fill="currentColor" />
+                <span className="w-3 md:w-5 h-[1px] bg-current opacity-80 shadow-[0_0_5px_currentColor]"></span>
+            </div>
+        );
+
         const toRoman = (num) => {
             const romans = ["I", "II", "III", "IV", "V"];
             return romans[num - 1] || num;
         };
 
         // --- 데이터 ---
+        // 하트 색상을 모두 'text-pink-400'으로 통일 (배경이 파랑이므로 핑크가 잘 보임)
         const THEMES = [
-            { id: 'destiny', title: '운명', engTitle: 'Destiny', heartColor: 'text-[#4A90E2]', accentColor: 'text-cyan-200' },
-            { id: 'unrequited', title: '짝사랑', engTitle: 'Unrequited', heartColor: 'text-[#50E3C2]', accentColor: 'text-emerald-200' },
-            { id: 'some', title: '썸', engTitle: 'Some', heartColor: 'text-[#F8E71C]', accentColor: 'text-amber-200' },
-            { id: 'relationship', title: '연애중', engTitle: 'Relationship', heartColor: 'text-[#E74C3C]', accentColor: 'text-red-200' },
+            { id: 'destiny', title: '운명', engTitle: 'Destiny', heartColor: 'text-pink-400', accentColor: 'text-cyan-200' },
+            { id: 'unrequited', title: '짝사랑', engTitle: 'Unrequited', heartColor: 'text-pink-400', accentColor: 'text-emerald-200' },
+            { id: 'some', title: '썸', engTitle: 'Some', heartColor: 'text-pink-400', accentColor: 'text-amber-200' },
+            { id: 'relationship', title: '연애중', engTitle: 'Relationship', heartColor: 'text-pink-400', accentColor: 'text-red-200' },
         ];
 
         const TEMPERATURES = [
@@ -344,7 +353,8 @@
                                         <span className="relative inline-flex rounded-full h-2 w-2 md:h-3 md:w-3 bg-red-500"></span>
                                       </span>
                                       <span className="text-white text-xs md:text-xl font-bold tracking-widest uppercase font-legible">
-                                        2025.12.20 &nbsp;|&nbsp; 15:00 - 19:00
+                                        {/* 시간 수정됨 */}
+                                        2025.12.20 &nbsp;|&nbsp; 14:30 - 18:30
                                       </span>
                                     </div>
                                     <h2 className="text-3xl md:text-7xl font-black mb-4 md:mb-8 text-white leading-tight font-playfair tracking-wide drop-shadow-2xl">
@@ -370,18 +380,19 @@
                                     </div>
                                   </div>
                                   
-                                  {/* 카드 그리드 - 반응형 설정 핵심 */}
+                                  {/* 카드 그리드 */}
                                   <div className="grid grid-cols-5 gap-1.5 sm:gap-4 md:gap-6 lg:gap-8 max-w-7xl mx-auto px-1 sm:px-4 pb-24">
                                     {CARDS.map((card, idx) => (
                                       <button key={card.id} onClick={() => handleCardClick(card)} className="group relative aspect-[9/15] w-full perspective-1000" style={{ animationDelay: `${idx * 0.05}s` }}>
-                                        <div className="absolute inset-0 rounded-lg md:rounded-2xl bg-card-aurora-final backdrop-blur-md shadow-lg border border-white/10 transition-all duration-500 group-hover:-translate-y-2 md:group-hover:-translate-y-4 group-hover:scale-[1.02] group-hover:shadow-2xl flex flex-col overflow-hidden">
+                                        {/* 카드 디자인 수정: 그림자 강도 대폭 증가 */}
+                                        <div className="absolute inset-0 rounded-lg md:rounded-2xl bg-card-aurora-final backdrop-blur-md transition-all duration-500 group-hover:-translate-y-2 md:group-hover:-translate-y-4 group-hover:scale-[1.02] flex flex-col overflow-hidden border border-white/20 shadow-[0_0_30px_rgba(255,255,255,0.3)] group-hover:shadow-[0_0_60px_rgba(255,255,255,0.6)]">
                                           
                                           {/* 카드 상단 아이콘 영역 */}
                                           <div className="absolute inset-0 z-10 flex items-center justify-center p-1 md:p-4 pointer-events-none">
                                             <HandSilhouette side="left" className="absolute left-[-25%] top-1/2 -translate-y-1/2 w-[80%] h-[100%] text-[#1e1b4b] opacity-40 mix-blend-multiply" />
                                             <HandSilhouette side="right" className="absolute right-[-25%] top-1/2 -translate-y-1/2 w-[80%] h-[100%] text-[#1e1b4b] opacity-40 mix-blend-multiply" />
                                             <div className="transform group-hover:scale-110 transition-transform duration-500 relative z-20 animate-float-slow">
-                                               {/* 하트 크기 조절: 모바일 w-6, 데스크탑 w-20 */}
+                                               {/* 하트 크기 조절 */}
                                                <RoundHeart className={`w-6 h-6 sm:w-12 sm:h-12 md:w-20 md:h-20 ${card.theme.heartColor}`} color={card.theme.heartColor} />
                                             </div>
                                           </div>
@@ -389,10 +400,10 @@
                                           {/* 카드 상단 텍스트 (Chapter, Title) */}
                                           <div className="flex-1 flex flex-col items-center justify-start p-1 md:p-4 relative z-30 pt-2 md:pt-8">
                                             <div className="w-full text-center space-y-0 md:space-y-1">
-                                               <span className="text-[5px] sm:text-[9px] md:text-base text-star-gold tracking-[0.1em] md:tracking-[0.2em] font-playfair font-bold mb-0.5 block text-shadow-strong">
+                                               <span className="text-[5px] sm:text-[9px] md:text-base text-pale-gold tracking-[0.1em] md:tracking-[0.2em] font-playfair font-bold mb-0.5 block text-shadow-strong">
                                                  Chapter {toRoman(card.themeIdx)}
                                                </span>
-                                               <h3 className="text-[8px] sm:text-xs md:text-xl font-bold text-white tracking-tight md:tracking-widest transition-colors duration-500 font-mystic text-shadow-strong opacity-90 leading-tight">
+                                               <h3 className="text-[8px] sm:text-xs md:text-xl font-bold text-light-gold tracking-tight md:tracking-widest transition-colors duration-500 font-mystic text-shadow-strong opacity-90 leading-tight">
                                                  {card.theme.title}
                                                </h3>
                                             </div>
@@ -401,16 +412,14 @@
                                           {/* 카드 하단 텍스트 (온도) */}
                                           <div className="flex-[1.2] flex flex-col items-center justify-end p-1 md:p-4 pb-2 md:pb-8 relative z-30">
                                             <div className="text-center w-full px-1 text-shadow-strong">
-                                               <div className="flex justify-center items-center gap-0.5 md:gap-2 mb-0.5 md:mb-1 text-star-gold opacity-80 text-[5px] md:text-xs">
-                                                 - <Star className="w-1.5 h-1.5 md:w-3 md:h-3" fill="currentColor" /> -
-                                               </div>
+                                               {/* 별 장식 컴포넌트 교체 */}
+                                               <StarDecoration className="justify-center mb-0.5 md:mb-1 text-[5px] md:text-xs" />
                                                <span className="block font-bold text-white font-zen whitespace-nowrap text-[9px] sm:text-base md:text-2xl">
                                                   {card.temp.value}{card.temp.value === '절대영도' ? '' : '℃'}
                                                </span>
                                             </div>
                                           </div>
-
-                                          <CardBorder className="absolute inset-0 w-full h-full pointer-events-none" />
+                                          {/* CardBorder 제거됨 */}
                                         </div>
                                       </button>
                                     ))}
@@ -428,7 +437,8 @@
                                     </button>
                                     <div className="flex flex-col items-center p-10 text-center relative z-10">
                                       <div className="w-48 h-72 mb-8 perspective-1000 group cursor-pointer" onClick={goToDetail}>
-                                         <div className="w-full h-full rounded-2xl bg-card-aurora-final relative shadow-[0_0_50px_rgba(255,255,255,0.15)] flex flex-col items-center justify-center p-6 transform transition-transform duration-500 group-hover:rotate-y-12 group-hover:scale-105 overflow-hidden">
+                                         {/* 모달 카드 디자인 수정: 그림자 강도 증가 */}
+                                         <div className="w-full h-full rounded-2xl bg-card-aurora-final relative shadow-[0_0_60px_rgba(255,255,255,0.4)] border border-white/20 flex flex-col items-center justify-center p-6 transform transition-transform duration-500 group-hover:rotate-y-12 group-hover:scale-105 overflow-hidden">
                                             <div className="absolute inset-0 z-10 flex items-center justify-center p-4 pointer-events-none">
                                                  <HandSilhouette side="left" className="absolute left-[-25%] top-1/2 -translate-y-1/2 w-[80%] h-[100%] text-[#1e1b4b] opacity-40 mix-blend-multiply" />
                                                  <HandSilhouette side="right" className="absolute right-[-25%] top-1/2 -translate-y-1/2 w-[80%] h-[100%] text-[#1e1b4b] opacity-40 mix-blend-multiply" />
@@ -436,29 +446,28 @@
                                             </div>
                                             <div className="flex-1 flex flex-col items-center justify-start w-full z-30 pt-6">
                                                <div className="flex flex-col items-center">
-                                                  <span className="text-xs text-star-gold tracking-[0.3em] uppercase mb-1 font-playfair text-shadow-strong">
+                                                  <span className="text-xs text-pale-gold tracking-[0.3em] uppercase mb-1 font-playfair text-shadow-strong">
                                                       Chapter {toRoman(selectedCard.themeIdx)}
                                                   </span>
-                                                  <span className="text-sm font-bold text-white tracking-wider font-mystic text-shadow-strong mt-1">
+                                                  <span className="text-sm font-bold text-light-gold tracking-wider font-mystic text-shadow-strong mt-1">
                                                       {selectedCard.theme.title}
                                                   </span>
                                                </div>
                                             </div>
                                             <div className="flex-[1.2] flex flex-col items-center justify-end w-full z-30 pb-6">
-                                               <div className="flex justify-center items-center gap-1 mb-1 text-star-gold opacity-80 text-[10px]">
-                                                   - <Star size={10} fill="currentColor" /> -
-                                               </div>
+                                               {/* 별 장식 컴포넌트 교체 */}
+                                               <StarDecoration className="justify-center mb-1 text-[10px]" />
                                               <span className="font-black text-white font-zen whitespace-nowrap text-lg text-shadow-strong">
                                                  {selectedCard.temp.value}{selectedCard.temp.value === '절대영도' ? '' : '℃'}
                                               </span>
                                             </div>
-                                            <CardBorder className="absolute inset-0 w-full h-full pointer-events-none" />
+                                            {/* CardBorder 제거됨 */}
                                          </div>
                                       </div>
                                       <h3 className="text-2xl font-bold text-white mb-3">이 카드가 맞나요?</h3>
                                       <p className="text-slate-400 mb-8 text-sm font-light tracking-wide leading-relaxed font-gothic">
-                                         선택하신 카드는 <span className="font-bold text-white">{selectedCard.theme.title}</span> 테마의<br/>
-                                         <span className="text-white font-medium border-b border-white/30 pb-0.5">{selectedCard.temp.value}{selectedCard.temp.value === '절대영도' ? '' : '℃'}</span> 카드입니다.
+                                        선택하신 카드는 <span className="font-bold text-white">{selectedCard.theme.title}</span> 테마의<br/>
+                                        <span className="text-white font-medium border-b border-white/30 pb-0.5">{selectedCard.temp.value}{selectedCard.temp.value === '절대영도' ? '' : '℃'}</span> 카드입니다.
                                       </p>
                                       <button onClick={goToDetail} className="group w-full py-4 bg-white text-black rounded-xl font-bold text-lg hover:bg-slate-200 transition-all shadow-[0_0_30px_rgba(255,255,255,0.1)] hover:shadow-[0_0_50px_rgba(255,255,255,0.3)] flex items-center justify-center gap-3 overflow-hidden relative">
                                          <span className="relative z-10 font-gothic font-bold whitespace-nowrap">카드 열어 보기</span>
@@ -478,7 +487,8 @@
                                     <div className="grid lg:grid-cols-[420px_1fr] min-h-[650px]">
                                       {/* 왼쪽: 카드 비주얼 */}
                                       <div className="relative p-8 md:p-12 flex flex-col items-center justify-center lg:border-r border-white/5 bg-gradient-to-b from-white/5 to-transparent">
-                                        <div className="w-64 h-[26rem] md:w-80 md:h-[32rem] rounded-3xl bg-card-aurora-final relative shadow-[0_20px_60px_rgba(0,0,0,0.5)] flex flex-col items-center justify-center overflow-hidden group isolate transform transition-transform hover:scale-[1.01] duration-500">
+                                        {/* 상세 페이지 카드 디자인 수정: 그림자 강도 대폭 증가 */}
+                                        <div className="w-64 h-[26rem] md:w-80 md:h-[32rem] rounded-3xl bg-card-aurora-final relative shadow-[0_0_80px_rgba(255,255,255,0.4)] border border-white/20 flex flex-col items-center justify-center overflow-hidden group isolate transform transition-transform hover:scale-[1.01] duration-500">
                                             <div className="absolute inset-0 z-10 flex items-center justify-center p-4 pointer-events-none">
                                                  <HandSilhouette side="left" className="absolute left-[-25%] top-1/2 -translate-y-1/2 w-[80%] h-[100%] text-[#1e1b4b] opacity-40 mix-blend-multiply" />
                                                  <HandSilhouette side="right" className="absolute right-[-25%] top-1/2 -translate-y-1/2 w-[80%] h-[100%] text-[#1e1b4b] opacity-40 mix-blend-multiply" />
@@ -486,26 +496,25 @@
                                             </div>
                                             <div className="z-30 text-center flex flex-col items-center justify-between h-full py-12 md:py-16 px-6 drop-shadow-lg">
                                                <div className="space-y-4 pt-4">
-                                                 <span className="text-lg md:text-xl tracking-[0.2em] text-star-gold uppercase block font-playfair text-shadow-strong">
+                                                 <span className="text-lg md:text-xl tracking-[0.2em] text-pale-gold uppercase block font-playfair text-shadow-strong">
                                                     Chapter {toRoman(selectedCard.themeIdx)}
                                                  </span>
-                                                 <span className="text-2xl md:text-3xl font-bold text-white tracking-wider font-mystic text-shadow-strong block">
+                                                 <span className="text-2xl md:text-3xl font-bold text-light-gold tracking-wider font-mystic text-shadow-strong block">
                                                     {selectedCard.theme.title}
                                                  </span>
                                                </div>
                                                <div className="relative py-4 mt-auto">
                                                  <div className="relative z-10 font-zen whitespace-nowrap text-shadow-strong">
-                                                    <div className="flex justify-center items-center gap-2 mb-2 text-star-gold opacity-80">
-                                                       - <Star size={20} fill="currentColor" /> -
-                                                    </div>
+                                                    {/* 별 장식 컴포넌트 교체 */}
+                                                    <StarDecoration className="justify-center mb-2" />
                                                     <span className="font-black text-white text-4xl md:text-5xl" style={{fontSize: '3.5rem'}}>
-                                                       {selectedCard.temp.value}{selectedCard.temp.value === '절대영도' ? '' : '℃'}
+                                                        {selectedCard.temp.value}{selectedCard.temp.value === '절대영도' ? '' : '℃'}
                                                     </span>
                                                  </div>
                                                </div>
                                                <div className="space-y-3 h-2"></div>
                                             </div>
-                                            <CardBorder className="absolute inset-0 w-full h-full pointer-events-none" />
+                                            {/* CardBorder 제거됨 */}
                                         </div>
                                         <div className="mt-8 md:mt-12 text-center space-y-1 opacity-90">
                                           <p className="text-white text-sm tracking-[0.1em] font-playfair drop-shadow-md font-bold">The Temperature of Love</p>
@@ -516,18 +525,18 @@
                                         <div className="relative z-10">
                                           <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/10">
                                             <div className="flex items-center gap-2 md:gap-3">
-                                                <span className={`text-lg md:text-2xl font-bold ${selectedCard.theme.accentColor} tracking-wider font-playfair`}>
-                                                   Chapter {toRoman(selectedCard.themeIdx)}
+                                                <span className={`text-lg md:text-2xl font-bold text-pale-gold tracking-wider font-playfair`}>
+                                                    Chapter {toRoman(selectedCard.themeIdx)}
                                                 </span>
-                                                <span className="text-lg md:text-2xl font-bold text-white tracking-wider font-mystic">
+                                                <span className="text-lg md:text-2xl font-bold text-light-gold tracking-wider font-mystic">
                                                    {selectedCard.theme.title}
                                                 </span>
                                             </div>
                                             <span className="text-white text-lg md:text-2xl font-bold tracking-widest font-zen drop-shadow-md whitespace-nowrap">
-                                              {selectedCard.temp.value}{selectedCard.temp.value === '절대영도' ? '' : '℃'}
+                                               {selectedCard.temp.value}{selectedCard.temp.value === '절대영도' ? '' : '℃'}
                                             </span>
                                           </div>
-                                          {/* 여기 수정됨: formatSummary 삭제 */}
+                                          
                                           <h1 className="text-2xl md:text-4xl font-bold text-white leading-tight mb-6 md:mb-8 drop-shadow-md font-mystic whitespace-pre-line">
                                             {selectedCard.summary}
                                           </h1>
@@ -570,7 +579,8 @@
                              </div>
                           </div>
                           <p className="text-slate-500 text-[10px] md:text-xs font-light tracking-[0.1em] mb-2">
-                            2025.12.20 15:00 - 19:00 | 정몽구 미래자동차연구센터 1층 컨퍼런스홀
+                            {/* 시간 수정됨 */}
+                            2025.12.20 14:30 - 18:30 | 정몽구 미래자동차연구센터 1층 컨퍼런스홀
                           </p>
                           <p className="text-slate-700 text-[9px] md:text-[10px] uppercase tracking-[0.3em]">
                             © 2025 TEDx HanyangU. All rights reserved.
